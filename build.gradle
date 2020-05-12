@@ -1,0 +1,51 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation ('org.springframework.boot:spring-boot-starter-web'){
+//        exclude module: "spring-boot-starter-tomcat"
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.2.7.RELEASE'
+    // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.7.0'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.0.2'
+
+    // https://mvnrepository.com/artifact/com.fasterxml.uuid/java-uuid-generator
+    compile group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: '3.1.0'
+    compile group: 'org.modelmapper', name: 'modelmapper', version: '0.7.5'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.10'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    compile group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.5.5'
+    compileOnly 'com.zaxxer:HikariCP'
+    compile("com.h2database:h2")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+    test {
+        useJUnitPlatform()
+    }
+
+
+
+    // https://mvnrepository.com/artifact/com.h2database/h2
+//    testCompile group: 'com.h2database', name: 'h2', version: '1.3.148'
+
+}
