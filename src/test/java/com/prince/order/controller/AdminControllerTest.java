@@ -32,7 +32,8 @@ class AdminControllerTest {
     }
 
     @Test
-    void getStatus() throws Exception {
+    void getStatus() {
+        headers.add("userId", "9170775458");
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
         ResponseEntity<AgentStatusResponse> response = restTemplate.exchange(createURLWithPort("/admin/agent/status?agentId" +
                 "=9170775458"), HttpMethod.GET, entity, AgentStatusResponse.class);

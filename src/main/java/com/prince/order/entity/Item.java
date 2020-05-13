@@ -1,6 +1,5 @@
 package com.prince.order.entity;
 
-import com.prince.order.enums.Available;
 import com.prince.order.enums.ItemCategory;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +31,8 @@ public class Item extends Timestamp {
     private double price;
 
     //discount in percentage
-    private double discount;
+    @Column(name = "percentage_discount")
+    private double percentageDiscount;
 
     @Enumerated(EnumType.STRING)
     private ItemCategory category;
@@ -46,7 +46,7 @@ public class Item extends Timestamp {
     private String description;
 
     public double getDiscountValue() {
-        return (price * discount) / 100;
+        return (price * percentageDiscount) / 100;
     }
 
     public Item() {

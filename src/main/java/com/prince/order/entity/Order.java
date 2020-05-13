@@ -42,36 +42,38 @@ public class Order extends Timestamp {
     @Column(name = "preparation_time")
     private long preparationTime;
 
-    @Column(name = "customer_mobile")
-    private String customerMobile;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Order() {
     }
 
-    public Order(String orderId, double orderAmount, double discount, String deliveryAddress, long preparationTime, String customerMobile) {
+    public Order(String orderId, double orderAmount, double discount, String deliveryAddress, User user,
+            long preparationTime) {
         this.orderId = orderId;
         this.orderAmount = orderAmount;
         this.discount = discount;
         this.deliveryAddress = deliveryAddress;
+        this.user = user;
         this.preparationTime = preparationTime;
-        this.customerMobile = customerMobile;
     }
 
     public static class OrderBuilder {
         private String orderId;
-        private String customerMobile;
         private double orderAmount;
         private long preparationTime;
         private double discount;
         private String deliveryAddress;
+        private User user;
 
         public OrderBuilder setOrderId(String orderId) {
             this.orderId = orderId;
             return this;
         }
 
-        public OrderBuilder setCustomerMobile(String customerMobile) {
-            this.customerMobile = customerMobile;
+        public OrderBuilder setUser(User user) {
+            this.user = user;
             return this;
         }
 
@@ -95,8 +97,8 @@ public class Order extends Timestamp {
             return this;
         }
 
-        public Order build(){
-            Order order = new Order(orderId, orderAmount, discount, deliveryAddress, preparationTime, customerMobile);
+        public Order build() {
+            Order order = new Order(orderId, orderAmount, discount, deliveryAddress, user, preparationTime);
             return order;
         }
     }

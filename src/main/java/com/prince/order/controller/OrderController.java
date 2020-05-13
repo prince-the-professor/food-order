@@ -22,21 +22,24 @@ public class OrderController {
         this.IOrderService = IOrderService;
     }
 
-    //use by user to place order
+    //use by User to place order
     @PostMapping("/place")
-    public ResponseEntity<OrderResponse> orderPlace(@Valid @RequestBody OrderRequest request) {
+    public ResponseEntity<OrderResponse> orderPlace(@RequestHeader String userId,
+            @Valid @RequestBody OrderRequest request) {
         return ResponseEntity.ok().body(IOrderService.orderPlace(request));
     }
 
-    //use by delivery user or admin to fetch order status
+    //use by delivery User or admin to fetch order status
     @GetMapping("/status")
-    public ResponseEntity<OrderStatusUpdateResponse> getOrderStatus(@RequestParam String orderId) {
+    public ResponseEntity<OrderStatusUpdateResponse> getOrderStatus(@RequestHeader String userId,
+            @RequestParam String orderId) {
         return ResponseEntity.ok().body(IOrderService.getOrderStatus(orderId));
     }
 
     //use by delivery person to update order status
     @PutMapping("/status")
-    public ResponseEntity<OrderStatusUpdateResponse> updateStatus(@Valid @RequestBody OrderStatusUpdateRequest request) {
+    public ResponseEntity<OrderStatusUpdateResponse> updateStatus(@RequestHeader String userId,
+            @Valid @RequestBody OrderStatusUpdateRequest request) {
         return ResponseEntity.ok().body(IOrderService.updateStatus(request));
     }
 

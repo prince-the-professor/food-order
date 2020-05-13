@@ -22,12 +22,12 @@ import java.util.Date;
 public class Timestamp {
 
     @CreatedDate
-    @Column(nullable=false, insertable = true, updatable = false, columnDefinition="datetime default current_timestamp")
+    @Column(nullable = false, insertable = true, updatable = false, columnDefinition = "datetime default current_timestamp")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Date createdOn;
 
     @LastModifiedDate
-    @Column(nullable=false, insertable = true, updatable = true, columnDefinition="datetime default current_timestamp")
+    @Column(nullable = false, insertable = true, updatable = true, columnDefinition = "datetime default current_timestamp")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Date modifiedOn;
 

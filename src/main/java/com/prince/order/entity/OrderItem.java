@@ -28,7 +28,13 @@ public class OrderItem extends Timestamp {
 
     private long quantity;
 
-    private double price;
+    @Column(name = "actual_price")
+    private double actualPrice;
+
+    private double discount;
+
+    @Column(name = "final_price")
+    private double finalPrice;
 
     public OrderItem() {
     }

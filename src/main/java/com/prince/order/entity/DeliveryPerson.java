@@ -1,6 +1,5 @@
 package com.prince.order.entity;
 
-import com.prince.order.enums.Available;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

@@ -1,11 +1,9 @@
 package com.prince.order.service.impl;
 
 import com.fasterxml.uuid.Generators;
-import com.prince.order.entity.DeliveryPerson;
-import com.prince.order.entity.Item;
-import com.prince.order.entity.Order;
-import com.prince.order.entity.OrderItem;
+import com.prince.order.entity.*;
 import com.prince.order.enums.OrderStatus;
+import com.prince.order.model.request.AddUserRequest;
 import com.prince.order.model.request.OrderRequest;
 import com.prince.order.model.request.OrderStatusUpdateRequest;
 import com.prince.order.model.response.OrderResponse;
@@ -15,6 +13,7 @@ import com.prince.order.repository.ItemRepository;
 import com.prince.order.repository.OrderItemRepository;
 import com.prince.order.repository.OrderRepository;
 import com.prince.order.service.ICacheService;
+import com.prince.order.service.IInventoryService;
 import com.prince.order.service.IOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,13 +31,15 @@ public class OrderServiceImpl implements IOrderService {
     private final OrderRepository orderRepository;
     private final DeliveryPersonRepository deliveryPersonRepository;
     private final ICacheService cacheService;
+    private final IInventoryService inventoryService;
 
-    public OrderServiceImpl(ItemRepository itemRepository, OrderItemRepository orderItemRepository, OrderRepository orderRepository, DeliveryPersonRepository deliveryPersonRepository, ICacheService cacheService) {
+    public OrderServiceImpl(ItemRepository itemRepository, OrderItemRepository orderItemRepository, OrderRepository orderRepository, DeliveryPersonRepository deliveryPersonRepository, ICacheService cacheService, IInventoryService inventoryService) {
         this.itemRepository = itemRepository;
         this.orderItemRepository = orderItemRepository;
         this.orderRepository = orderRepository;
         this.deliveryPersonRepository = deliveryPersonRepository;
         this.cacheService = cacheService;
+        this.inventoryService = inventoryService;
     }
 
     @Override
@@ -47,9 +48,13 @@ public class OrderServiceImpl implements IOrderService {
         OrderResponse response = new OrderResponse();
         List<String> itemIds = new ArrayList<>(orderRequest.getItemQuantity().keySet());
         try {
+            AddUserRequest request = new AddUserRequest();
+            request.setMobileNo(orderRequest.getMobileNo());
+            request.setAddress(orderRequest.getDeliveryAddress());
+            User user = inventoryService.ValidateUser(request);
             List<Item> itemList = itemRepository.findByItemIdIn(itemIds);
             if (itemIds.size() == itemList.size()) {
-                createCartAndOrder(orderRequest, itemList, response);
+                createCartAndOrder(orderRequest, itemList, response, user);
                 response.setMessage("order created");
             } else {
                 response.setMessage("item missing");
@@ -110,34 +115,42 @@ public class OrderServiceImpl implements IOrderService {
         deliveryPersonRepository.save(person);
     }
 
-    private void createCartAndOrder(OrderRequest orderRequest, List<Item> itemList, OrderResponse response) {
-        List<OrderItem> orderItemList = new ArrayList<>();
+    private void createCartAndOrder(OrderRequest orderRequest, List<Item> itemList, OrderResponse response, User user) {
+        List<OrderItem> cart = new ArrayList<>();
         String orderId = "fdo_" + Generators.timeBasedGenerator().generate().toString();
-        double billAmount = 0, discount = 0, dc, price;
+        double billAmount = 0, orderDiscount = 0, itemDiscount, actual_price, final_price;
         long totalPreparationTime = 0;
         for (Item item : itemList) {
             long quantity = orderRequest.getItemQuantity().get(item.getItemId());
-            dc = item.getDiscountValue() * quantity;
-            price = item.getPrice() * quantity - dc;
-            orderItemList.add(new OrderItem().setOrderId(orderId).setPrice(price).setItem(item).setQuantity(quantity));
-            discount += dc;
-            billAmount += price;
+            itemDiscount = item.getDiscountValue() * quantity;
+            actual_price = item.getPrice() * quantity;
+            final_price = actual_price - itemDiscount;
+            cart.add(new OrderItem()
+                    .setOrderId(orderId)
+                    .setItem(item)
+                    .setQuantity(quantity)
+                    .setDiscount(itemDiscount)
+                    .setActualPrice(actual_price)
+                    .setFinalPrice(final_price));
+            orderDiscount += itemDiscount;
+            billAmount += final_price;
 
             totalPreparationTime += (item.getPreparationTime() * quantity);
         }
-        orderItemRepository.saveAll(orderItemList);
-        prepareOrder(orderRequest, orderId, billAmount, discount, totalPreparationTime, response);
+        orderItemRepository.saveAll(cart);
+        prepareOrder(orderRequest, orderId, billAmount, orderDiscount, totalPreparationTime, user, response);
     }
 
     private void prepareOrder(OrderRequest orderRequest, String orderId, double billAmount, double discount,
-            long totalPreparationTime, OrderResponse response) {
+            long totalPreparationTime, User user, OrderResponse response) {
         Order order =
                 new Order.OrderBuilder()
                         .setOrderId(orderId)
                         .setOrderAmount(billAmount)
-                        .setCustomerMobile(orderRequest.getMobileNo())
                         .setDiscount(discount)
-                        .setDeliveryAddress(orderRequest.getDeliveryAddress().toString())
+                        .setDeliveryAddress(orderRequest.getDeliveryAddress() != null ?
+                                orderRequest.getDeliveryAddress().toString() : user.getAddress())
+                        .setUser(user)
                         .setPreparationTime(totalPreparationTime)
                         .build();
         cacheService.saveOrder(order);
