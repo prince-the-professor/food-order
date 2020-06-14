@@ -28,7 +28,7 @@ Except these I included JUnit test with mockito along with spring-boot API integ
 Scope of improvement:
 
 1. I can add queuing mechanism to assign order asynchronous.
-2. I can use NoSql DB to manage order history or any other transations for analysis purpose.
+2. I can use NoSql DB to manage order history or any other transactions for analysis purpose.
 3. A feedback API should also be created.
 4. There should be 10-20 second of time-out for each delivery agent to accept the order before request transferred to another person.
 

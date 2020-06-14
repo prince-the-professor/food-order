@@ -13,7 +13,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -32,7 +31,7 @@ public class DeliveryApplication {
 
     @Bean
     public Cache caffeineCache() {
-        Cache<String, List<Order>> cache = Caffeine.newBuilder()
+        Cache<String, Order> cache = Caffeine.newBuilder()
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(100)
                 .build();
