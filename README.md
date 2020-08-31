@@ -1,6 +1,6 @@
 # food-order
 
-This project is a basic online food delivery system which involves basic features like order place, assign & update.
+This project is a online food delivery service which involves basic features like order place, assign & update.
 
 APIs are
 
@@ -10,7 +10,7 @@ APIs are
 4. Update order status (use by person to update order like: PICKED/DELIVERED)
 5. Delivery agent status (if not available returns time remain to deliver current order)
 6. Get status of each agent
-7. Add and fetch items in inventory
+7. Add and fetch items through inventory
 8. Add a new agent
 
 API flow:
@@ -27,9 +27,10 @@ Except these I included JUnit test with mockito along with spring-boot API integ
 
 Scope of improvement:
 
-1. I can add queuing mechanism to assign order asynchronous.
+1. I can add queuing mechanism to assign order asynchronously.
 2. I can use NoSql DB to manage order history or any other transactions for analysis purpose.
 3. A feedback API should also be created.
-4. There should be 10-20 second of time-out for each delivery agent to accept the order before request transferred to another person.
+4. There should be 10-20 second of time-out for each delivery agent to accept the order before request transferred to
+ another person like OLA and UBER.
 
 Along these I have added swagger file, ER diagram, Class diagram and APIs execution request-response snapshot.

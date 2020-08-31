@@ -49,7 +49,7 @@ public class Order extends Timestamp {
     public Order() {
     }
 
-    public Order(String orderId, double orderAmount, double discount, String deliveryAddress, User user,
+    private Order(String orderId, double orderAmount, double discount, String deliveryAddress, User user,
             long preparationTime) {
         this.orderId = orderId;
         this.orderAmount = orderAmount;
