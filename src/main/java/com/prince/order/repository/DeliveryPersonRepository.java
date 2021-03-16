@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DeliveryPersonRepository extends CrudRepository<DeliveryPerson, Long> {
+
     DeliveryPerson findByMobileNo(String mobileNo);
 }
